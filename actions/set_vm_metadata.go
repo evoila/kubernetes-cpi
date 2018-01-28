@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"strings"
 
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	"k8s.io/client-go/1.4/pkg/api"
-	"k8s.io/client-go/1.4/pkg/util/strategicpatch"
-	"k8s.io/client-go/1.4/pkg/util/validation"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/apimachinery/pkg/util/strategicpatch"
+	"k8s.io/apimachinery/pkg/util/validation"
 )
 
 type VMMetadataSetter struct {
@@ -23,7 +24,7 @@ func (v *VMMetadataSetter) SetVMMetadata(vmcid cpi.VMCID, metadata map[string]st
 		return err
 	}
 
-	pod, err := client.Pods().Get("agent-" + agentID)
+	pod, err := client.Pods().Get("agent-"+agentID, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -50,7 +51,7 @@ func (v *VMMetadataSetter) SetVMMetadata(vmcid cpi.VMCID, metadata map[string]st
 		return err
 	}
 
-	_, err = client.Pods().Patch(pod.Name, api.StrategicMergePatchType, patch)
+	_, err = client.Pods().Patch(pod.Name, types.StrategicMergePatchType, patch)
 	if err != nil {
 		return err
 	}

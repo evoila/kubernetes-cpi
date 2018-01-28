@@ -1,6 +1,6 @@
 package actions
 
-import "github.com/sykesm/kubernetes-cpi/cpi"
+import "github.com/evoila/kubernetes-cpi/cpi"
 
 type StemcellCloudProperties struct {
 	Image string `json:"image"`

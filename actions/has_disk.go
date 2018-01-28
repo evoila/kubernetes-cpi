@@ -1,10 +1,10 @@
 package actions
 
 import (
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	"k8s.io/client-go/1.4/pkg/api"
-	"k8s.io/client-go/1.4/pkg/labels"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 )
 
 type DiskFinder struct {
@@ -23,7 +23,7 @@ func (d *DiskFinder) HasDisk(diskCID cpi.DiskCID) (bool, error) {
 		return false, err
 	}
 
-	listOptions := api.ListOptions{LabelSelector: diskSelector}
+	listOptions := metav1.ListOptions{LabelSelector: diskSelector.String()}
 	pvcList, err := client.PersistentVolumeClaims().List(listOptions)
 	if err != nil {
 		return false, err

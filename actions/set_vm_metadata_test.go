@@ -3,15 +3,16 @@ package actions_test
 import (
 	"errors"
 
+	"github.com/evoila/kubernetes-cpi/actions"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster/fakes"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/sykesm/kubernetes-cpi/actions"
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster/fakes"
-	"k8s.io/client-go/1.4/kubernetes/fake"
-	"k8s.io/client-go/1.4/pkg/api/v1"
-	"k8s.io/client-go/1.4/pkg/runtime"
-	"k8s.io/client-go/1.4/testing"
+	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes/fake"
+	"k8s.io/client-go/testing"
 )
 
 var _ = Describe("SetVMMetadata", func() {
@@ -43,7 +44,7 @@ var _ = Describe("SetVMMetadata", func() {
 		}
 
 		fakeClient.Clientset = *fake.NewSimpleClientset(
-			&v1.Pod{ObjectMeta: v1.ObjectMeta{
+			&v1.Pod{ObjectMeta: metav1.ObjectMeta{
 				Name:      "agent-agent-id",
 				Namespace: "bosh-namespace",
 				Labels: map[string]string{

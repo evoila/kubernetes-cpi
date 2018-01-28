@@ -3,8 +3,8 @@ package actions
 import (
 	"strings"
 
+	"github.com/evoila/kubernetes-cpi/cpi"
 	uuid "github.com/nu7hatch/gouuid"
-	"github.com/sykesm/kubernetes-cpi/cpi"
 )
 
 func NewVMCID(context, agentID string) cpi.VMCID {

@@ -9,14 +9,13 @@ import (
 
 	"code.cloudfoundry.org/clock"
 
-	"github.com/sykesm/kubernetes-cpi/agent"
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	core "k8s.io/client-go/1.4/kubernetes/typed/core/v1"
-	"k8s.io/client-go/1.4/pkg/api"
-	"k8s.io/client-go/1.4/pkg/api/v1"
-	"k8s.io/client-go/1.4/pkg/labels"
-	"k8s.io/client-go/1.4/pkg/watch"
+	"github.com/evoila/kubernetes-cpi/agent"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/watch"
+	core "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type VolumeManager struct {
@@ -76,7 +75,7 @@ func (v *VolumeManager) DetachDisk(vmcid cpi.VMCID, diskCID cpi.DiskCID) error {
 
 func (v *VolumeManager) recreatePod(client kubecluster.Client, op Operation, agentID string, diskID string) error {
 	podService := client.Pods()
-	pod, err := podService.Get("agent-" + agentID)
+	pod, err := podService.Get("agent-"+agentID, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -96,7 +95,7 @@ func (v *VolumeManager) recreatePod(client kubecluster.Client, op Operation, age
 		pod.Annotations["bosh.cloudfoundry.org/ip-address"] = pod.Status.PodIP
 	}
 
-	pod.ObjectMeta = v1.ObjectMeta{
+	pod.ObjectMeta = metav1.ObjectMeta{
 		Name:        pod.Name,
 		Namespace:   pod.Namespace,
 		Annotations: pod.Annotations,
@@ -104,7 +103,7 @@ func (v *VolumeManager) recreatePod(client kubecluster.Client, op Operation, age
 	}
 	pod.Status = v1.PodStatus{}
 
-	err = podService.Delete("agent-"+agentID, &api.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
+	err = podService.Delete("agent-"+agentID, &metav1.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
 	if err != nil {
 		return err
 	}
@@ -131,7 +130,7 @@ func (v *VolumeManager) recreatePod(client kubecluster.Client, op Operation, age
 
 func updateConfigMapDisks(client kubecluster.Client, op Operation, agentID, diskID string) error {
 	configMapService := client.ConfigMaps()
-	cm, err := configMapService.Get("agent-" + agentID)
+	cm, err := configMapService.Get("agent-"+agentID, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -220,12 +219,9 @@ func removeVolume(spec *v1.PodSpec, diskID string) {
 }
 
 func (v *VolumeManager) waitForPod(podService core.PodInterface, agentID string, resourceVersion string) (bool, error) {
-	agentSelector, err := labels.Parse("bosh.cloudfoundry.org/agent-id=" + agentID)
-	if err != nil {
-		return false, err
-	}
+	agentSelector := "bosh.cloudfoundry.org/agent-id=" + agentID
 
-	listOptions := api.ListOptions{
+	listOptions := metav1.ListOptions{
 		LabelSelector:   agentSelector,
 		ResourceVersion: resourceVersion,
 		Watch:           true,

@@ -10,15 +10,16 @@ import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 
-	"github.com/sykesm/kubernetes-cpi/actions"
-	"github.com/sykesm/kubernetes-cpi/agent"
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster/fakes"
+	"github.com/evoila/kubernetes-cpi/actions"
+	"github.com/evoila/kubernetes-cpi/agent"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster/fakes"
 
-	"k8s.io/client-go/1.4/pkg/api/v1"
-	"k8s.io/client-go/1.4/pkg/runtime"
-	"k8s.io/client-go/1.4/pkg/watch"
-	"k8s.io/client-go/1.4/testing"
+	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/watch"
+	"k8s.io/client-go/testing"
 )
 
 var _ = Describe("VolumeManager", func() {
@@ -29,7 +30,7 @@ var _ = Describe("VolumeManager", func() {
 		fakeWatch    *watch.FakeWatcher
 		vmcid        cpi.VMCID
 		diskCID      cpi.DiskCID
-		agentMeta    v1.ObjectMeta
+		agentMeta    metav1.ObjectMeta
 
 		volumeManager *actions.VolumeManager
 	)
@@ -38,7 +39,7 @@ var _ = Describe("VolumeManager", func() {
 		vmcid = actions.NewVMCID("context-name", "agent-id")
 		diskCID = actions.NewDiskCID("context-name", "disk-id")
 
-		agentMeta = v1.ObjectMeta{
+		agentMeta = metav1.ObjectMeta{
 			Name:      "agent-agent-id",
 			Namespace: "bosh-namespace",
 			Annotations: map[string]string{
@@ -110,7 +111,7 @@ var _ = Describe("VolumeManager", func() {
 			fakeClient.ContextReturns("context-name")
 			fakeClient.NamespaceReturns("bosh-namespace")
 
-			fakeWatch = watch.NewFakeWithChanSize(1)
+			fakeWatch = watch.NewFakeWithChanSize(1, true)
 			fakeWatch.Modify(&v1.Pod{
 				ObjectMeta: agentMeta,
 				Spec:       initialPodSpec,
@@ -402,7 +403,7 @@ var _ = Describe("VolumeManager", func() {
 		Context("when unmarshalling the instance settings fails", func() {
 			BeforeEach(func() {
 				cm := &v1.ConfigMap{
-					ObjectMeta: v1.ObjectMeta{Name: "agent-agent-id", Namespace: "bosh-namespace"},
+					ObjectMeta: metav1.ObjectMeta{Name: "agent-agent-id", Namespace: "bosh-namespace"},
 					Data:       map[string]string{"instance_settings": `!@$#@$#%!%`},
 				}
 				fakeClient.PrependReactor("get", "configmaps", func(action testing.Action) (bool, runtime.Object, error) {
@@ -550,7 +551,7 @@ var _ = Describe("VolumeManager", func() {
 			fakeClient.ContextReturns("context-name")
 			fakeClient.NamespaceReturns("bosh-namespace")
 
-			fakeWatch = watch.NewFakeWithChanSize(1)
+			fakeWatch = watch.NewFakeWithChanSize(1, true)
 			fakeWatch.Modify(&v1.Pod{
 				ObjectMeta: agentMeta,
 				Spec:       initialPodSpec,

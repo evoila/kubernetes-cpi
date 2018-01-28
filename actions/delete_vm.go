@@ -1,14 +1,13 @@
 package actions
 
 import (
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
 
-	core "k8s.io/client-go/1.4/kubernetes/typed/core/v1"
-	"k8s.io/client-go/1.4/pkg/api"
-	kubeerrors "k8s.io/client-go/1.4/pkg/api/errors"
-	"k8s.io/client-go/1.4/pkg/api/unversioned"
-	"k8s.io/client-go/1.4/pkg/labels"
+	kubeerrors "k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
+	core "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type VMDeleter struct {
@@ -42,9 +41,9 @@ func (v *VMDeleter) Delete(vmcid cpi.VMCID) error {
 }
 
 func deleteConfigMap(configMapService core.ConfigMapInterface, agentID string) error {
-	err := configMapService.Delete("agent-"+agentID, &api.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
+	err := configMapService.Delete("agent-"+agentID, &metav1.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
 	if statusError, ok := err.(*kubeerrors.StatusError); ok {
-		if statusError.Status().Reason == unversioned.StatusReasonNotFound {
+		if statusError.Status().Reason == metav1.StatusReasonNotFound {
 			return nil
 		}
 	}
@@ -57,13 +56,13 @@ func deleteServices(serviceClient core.ServiceInterface, agentID string) error {
 		return err
 	}
 
-	serviceList, err := serviceClient.List(api.ListOptions{LabelSelector: agentSelector})
+	serviceList, err := serviceClient.List(metav1.ListOptions{LabelSelector: agentSelector.String()})
 	if err != nil {
 		return err
 	}
 
 	for _, service := range serviceList.Items {
-		err := serviceClient.Delete(service.Name, &api.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
+		err := serviceClient.Delete(service.Name, &metav1.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
 		if err != nil {
 			return err
 		}
@@ -73,9 +72,9 @@ func deleteServices(serviceClient core.ServiceInterface, agentID string) error {
 }
 
 func deletePod(podClient core.PodInterface, agentID string) error {
-	err := podClient.Delete("agent-"+agentID, &api.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
+	err := podClient.Delete("agent-"+agentID, &metav1.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
 	if statusError, ok := err.(*kubeerrors.StatusError); ok {
-		if statusError.Status().Reason == unversioned.StatusReasonNotFound {
+		if statusError.Status().Reason == metav1.StatusReasonNotFound {
 			return nil
 		}
 	}

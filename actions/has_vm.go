@@ -1,11 +1,11 @@
 package actions
 
 import (
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	"k8s.io/client-go/1.4/pkg/api"
-	"k8s.io/client-go/1.4/pkg/api/v1"
-	"k8s.io/client-go/1.4/pkg/labels"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 )
 
 type VMFinder struct {
@@ -29,7 +29,7 @@ func (f *VMFinder) FindVM(vmcid cpi.VMCID) (string, *v1.Pod, error) {
 		return "", nil, err
 	}
 
-	listOptions := api.ListOptions{LabelSelector: agentSelector}
+	listOptions := metav1.ListOptions{LabelSelector: agentSelector.String()}
 	podList, err := client.Pods().List(listOptions)
 	if err != nil {
 		return "", nil, err

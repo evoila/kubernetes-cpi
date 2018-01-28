@@ -4,18 +4,19 @@ import (
 	"encoding/json"
 	"errors"
 
-	kubeerrors "k8s.io/client-go/1.4/pkg/api/errors"
-	"k8s.io/client-go/1.4/pkg/api/resource"
-	"k8s.io/client-go/1.4/pkg/api/unversioned"
-	"k8s.io/client-go/1.4/pkg/api/v1"
-	"k8s.io/client-go/1.4/pkg/runtime"
-	"k8s.io/client-go/1.4/testing"
+	"k8s.io/api/core/v1"
+	kubeerrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	schema "k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/testing"
 
-	"github.com/sykesm/kubernetes-cpi/actions"
-	"github.com/sykesm/kubernetes-cpi/agent"
-	"github.com/sykesm/kubernetes-cpi/config"
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster/fakes"
+	"github.com/evoila/kubernetes-cpi/actions"
+	"github.com/evoila/kubernetes-cpi/agent"
+	"github.com/evoila/kubernetes-cpi/config"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster/fakes"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -118,7 +119,7 @@ var _ = Describe("CreateVM", func() {
 		Context("when the namespace already exists", func() {
 			BeforeEach(func() {
 				fakeClient = fakes.NewClient(
-					&v1.Namespace{ObjectMeta: v1.ObjectMeta{Name: "bosh-namespace"}},
+					&v1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "bosh-namespace"}},
 				)
 				fakeClient.ContextReturns("bosh")
 				fakeClient.NamespaceReturns("bosh-namespace")
@@ -137,7 +138,7 @@ var _ = Describe("CreateVM", func() {
 		Context("when the namespace create fails with StatusReasonAlreadyExists", func() {
 			BeforeEach(func() {
 				fakeClient.PrependReactor("create", "namespaces", func(action testing.Action) (bool, runtime.Object, error) {
-					gr := unversioned.GroupResource{Group: "", Resource: "namespaces"}
+					gr := schema.GroupResource{Group: "", Resource: "namespaces"}
 					return true, nil, kubeerrors.NewAlreadyExists(gr, "bosh-namespace")
 				})
 			})

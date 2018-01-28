@@ -3,11 +3,12 @@ package actions_test
 import (
 	"errors"
 
-	"github.com/sykesm/kubernetes-cpi/actions"
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster/fakes"
-	"k8s.io/client-go/1.4/pkg/api/v1"
-	"k8s.io/client-go/1.4/testing"
+	"github.com/evoila/kubernetes-cpi/actions"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster/fakes"
+	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/testing"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -25,7 +26,7 @@ var _ = Describe("HasDisk", func() {
 		fakeClient = fakes.NewClient(
 			&v1.PersistentVolumeClaimList{
 				Items: []v1.PersistentVolumeClaim{{
-					ObjectMeta: v1.ObjectMeta{
+					ObjectMeta: metav1.ObjectMeta{
 						Name:      "disk-diskID-1",
 						Namespace: "bosh-namespace",
 						Labels:    map[string]string{"bosh.cloudfoundry.org/disk-id": "diskID-1"},

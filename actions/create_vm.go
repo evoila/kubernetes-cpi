@@ -5,16 +5,16 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/sykesm/kubernetes-cpi/agent"
-	"github.com/sykesm/kubernetes-cpi/config"
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
+	"github.com/evoila/kubernetes-cpi/agent"
+	"github.com/evoila/kubernetes-cpi/config"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
 
-	core "k8s.io/client-go/1.4/kubernetes/typed/core/v1"
-	kubeerrors "k8s.io/client-go/1.4/pkg/api/errors"
-	"k8s.io/client-go/1.4/pkg/api/resource"
-	"k8s.io/client-go/1.4/pkg/api/unversioned"
-	"k8s.io/client-go/1.4/pkg/api/v1"
+	v1 "k8s.io/api/core/v1"
+	kubeerrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/resource"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	core "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type VMCreator struct {
@@ -154,21 +154,21 @@ func (v *VMCreator) InstanceSettings(agentID string, networks cpi.Networks, env 
 	return settings, nil
 }
 
-func createNamespace(coreClient core.CoreInterface, namespace string) error {
-	_, err := coreClient.Namespaces().Get(namespace)
+func createNamespace(coreClient core.CoreV1Interface, namespace string) error {
+	_, err := coreClient.Namespaces().Get(namespace, metav1.GetOptions{})
 	if err == nil {
 		return nil
 	}
 
 	_, err = coreClient.Namespaces().Create(&v1.Namespace{
-		ObjectMeta: v1.ObjectMeta{Name: namespace},
+		ObjectMeta: metav1.ObjectMeta{Name: namespace},
 	})
 	if err == nil {
 		return nil
 	}
 
 	if statusError, ok := err.(*kubeerrors.StatusError); ok {
-		if statusError.Status().Reason == unversioned.StatusReasonAlreadyExists {
+		if statusError.Status().Reason == metav1.StatusReasonAlreadyExists {
 			return nil
 		}
 	}
@@ -182,7 +182,7 @@ func createConfigMap(configMapService core.ConfigMapInterface, ns, agentID strin
 	}
 
 	return configMapService.Create(&v1.ConfigMap{
-		ObjectMeta: v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name:      "agent-" + agentID,
 			Namespace: ns,
 			Labels: map[string]string{
@@ -214,7 +214,7 @@ func createServices(serviceClient core.ServiceInterface, ns, agentID string, ser
 		}
 
 		service := &v1.Service{
-			ObjectMeta: v1.ObjectMeta{
+			ObjectMeta: metav1.ObjectMeta{
 				Name:      svc.Name,
 				Namespace: ns,
 				Labels: map[string]string{
@@ -255,7 +255,7 @@ func createPod(podClient core.PodInterface, ns, agentID, image string, network c
 	}
 
 	return podClient.Create(&v1.Pod{
-		ObjectMeta: v1.ObjectMeta{
+		ObjectMeta: metav1.ObjectMeta{
 			Name:        "agent-" + agentID,
 			Namespace:   ns,
 			Annotations: annotations,

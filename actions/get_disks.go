@@ -3,11 +3,12 @@ package actions
 import (
 	"net/http"
 
-	"github.com/sykesm/kubernetes-cpi/cpi"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	core "k8s.io/client-go/1.4/kubernetes/typed/core/v1"
-	"k8s.io/client-go/1.4/pkg/api/errors"
-	"k8s.io/client-go/1.4/pkg/api/v1"
+	"github.com/evoila/kubernetes-cpi/cpi"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
+	v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	core "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type DiskGetter struct {
@@ -21,7 +22,7 @@ func (d *DiskGetter) GetDisks(vmcid cpi.VMCID) ([]cpi.DiskCID, error) {
 		return nil, err
 	}
 
-	pod, err := client.Pods().Get("agent-" + agentID)
+	pod, err := client.Pods().Get("agent-"+agentID, metav1.GetOptions{})
 	if err != nil {
 		if statusError, ok := err.(*errors.StatusError); ok {
 			if statusError.Status().Code == http.StatusNotFound {
@@ -52,7 +53,7 @@ func (d *DiskGetter) GetDisks(vmcid cpi.VMCID) ([]cpi.DiskCID, error) {
 
 func getPVClaim(pvcClient core.PersistentVolumeClaimInterface, volumeSource v1.VolumeSource) (*v1.PersistentVolumeClaim, error) {
 	if volumeSource.PersistentVolumeClaim != nil {
-		return pvcClient.Get(volumeSource.PersistentVolumeClaim.ClaimName)
+		return pvcClient.Get(volumeSource.PersistentVolumeClaim.ClaimName, metav1.GetOptions{})
 	}
 	return nil, nil
 }
