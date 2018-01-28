@@ -1,11 +1,11 @@
 package fakes
 
 import (
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	"k8s.io/client-go/1.4/kubernetes/fake"
-	core "k8s.io/client-go/1.4/kubernetes/typed/core/v1"
-	"k8s.io/client-go/1.4/pkg/runtime"
-	"k8s.io/client-go/1.4/testing"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes/fake"
+	core "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/client-go/testing"
 )
 
 //go:generate counterfeiter -o client_context.go --fake-name ClientContext . clientContext

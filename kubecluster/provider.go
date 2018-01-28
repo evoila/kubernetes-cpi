@@ -1,9 +1,9 @@
 package kubecluster
 
 import (
-	"k8s.io/client-go/1.4/kubernetes"
-	"k8s.io/client-go/1.4/tools/clientcmd"
-	clientcmdapi "k8s.io/client-go/1.4/tools/clientcmd/api"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
 
 const DefaultContext = ""

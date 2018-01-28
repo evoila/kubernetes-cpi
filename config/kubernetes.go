@@ -1,6 +1,6 @@
 package config
 
-import clientcmdapi "k8s.io/client-go/1.4/tools/clientcmd/api"
+import clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
 type Cluster struct {
 	Server                   string `json:"server"`

@@ -3,9 +3,9 @@ package cpi_test
 import (
 	"errors"
 
+	"github.com/evoila/kubernetes-cpi/cpi"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/sykesm/kubernetes-cpi/cpi"
 )
 
 var _ = Describe("Dispatch", func() {

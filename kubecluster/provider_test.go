@@ -3,12 +3,13 @@ package kubecluster_test
 import (
 	"net/http"
 
+	"github.com/evoila/kubernetes-cpi/config"
+	"github.com/evoila/kubernetes-cpi/kubecluster"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	"github.com/onsi/gomega/ghttp"
-	"github.com/sykesm/kubernetes-cpi/config"
-	"github.com/sykesm/kubernetes-cpi/kubecluster"
-	"k8s.io/client-go/1.4/pkg/api/v1"
+	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 var _ = Describe("Provider", func() {
@@ -65,7 +66,7 @@ var _ = Describe("Provider", func() {
 				ghttp.VerifyBasicAuth("default-user", "default-password"),
 				ghttp.RespondWithJSONEncoded(
 					http.StatusOK,
-					v1.Pod{ObjectMeta: v1.ObjectMeta{Name: "podname", Namespace: "default-context-namespace"}},
+					v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "podname", Namespace: "default-context-namespace"}},
 				),
 			))
 		})
@@ -74,7 +75,7 @@ var _ = Describe("Provider", func() {
 			client, err := provider.New("")
 			Expect(err).NotTo(HaveOccurred())
 
-			pod, err := client.Pods().Get("podname")
+			pod, err := client.Pods().Get("podname", metav1.GetOptions{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
 
@@ -90,7 +91,7 @@ var _ = Describe("Provider", func() {
 				ghttp.VerifyBasicAuth("user", "password"),
 				ghttp.RespondWithJSONEncoded(
 					http.StatusOK,
-					v1.Pod{ObjectMeta: v1.ObjectMeta{Name: "podname", Namespace: "test-context-namespace"}},
+					v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "podname", Namespace: "test-context-namespace"}},
 				),
 			))
 		})
@@ -99,7 +100,7 @@ var _ = Describe("Provider", func() {
 			client, err := provider.New("test_context")
 			Expect(err).NotTo(HaveOccurred())
 
-			pod, err := client.Pods().Get("podname")
+			pod, err := client.Pods().Get("podname", metav1.GetOptions{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
 
@@ -115,7 +116,7 @@ var _ = Describe("Provider", func() {
 				ghttp.VerifyBasicAuth("user", "password"),
 				ghttp.RespondWithJSONEncoded(
 					http.StatusOK,
-					v1.Pod{ObjectMeta: v1.ObjectMeta{Name: "podname", Namespace: "default"}},
+					v1.Pod{ObjectMeta: metav1.ObjectMeta{Name: "podname", Namespace: "default"}},
 				),
 			))
 		})
@@ -124,7 +125,7 @@ var _ = Describe("Provider", func() {
 			client, err := provider.New("no_namespace")
 			Expect(err).NotTo(HaveOccurred())
 
-			pod, err := client.Pods().Get("podname")
+			pod, err := client.Pods().Get("podname", metav1.GetOptions{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(server.ReceivedRequests()).To(HaveLen(1))
 

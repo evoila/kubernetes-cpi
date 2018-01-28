@@ -3,9 +3,9 @@ package config_test
 import (
 	"encoding/json"
 
+	"github.com/evoila/kubernetes-cpi/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/sykesm/kubernetes-cpi/config"
 )
 
 var _ = Describe("Agent Config", func() {

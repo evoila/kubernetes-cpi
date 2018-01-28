@@ -1,0 +1,38 @@
+hash: a35c3da1cd0326dd8f04fe28c2d17f988d04566a558219eb6860675567c45e0d
+updated: 2018-01-27T13:44:29.758756+01:00
+imports:
+- name: code.cloudfoundry.org/clock
+  version: e9dc86bbf0e5bbe6bf7ff5a6f71e048959b61f71
+- name: github.com/golang/glog
+  version: 44145f04b68cf362d9c4df2182967c2275eaefed
+- name: github.com/golang/protobuf
+  version: 1643683e1b54a9e88ad26d98f81400c8c9d9f4f9
+- name: github.com/google/gofuzz
+  version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
+- name: github.com/googleapis/gnostic
+  version: 0c5108395e2debce0d731cf0287ddf7242066aba
+  subpackages:
+  - OpenAPIv2
+- name: github.com/nu7hatch/gouuid
+  version: 179d4d0c4d8d407a32af483c2354df1d2c91e6c3
+- name: golang.org/x/net
+  version: 1c05540f6879653db88113bc4a2b70aec4bd491f
+- name: golang.org/x/text
+  version: b19bf474d317b857955b12035d2c5acb57ce8b01
+- name: gopkg.in/yaml.v2
+  version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
+- name: k8s.io/api
+  version: dc0dd48d5a5cae9f8736bb0643cfe6052e450f1b
+- name: k8s.io/apimachinery
+  version: b621949a1923cee3fce8bca9613e9a83609f0bbc
+- name: k8s.io/kube-openapi
+  version: a07b7bbb58e7fdc5144f8d7046331d29fc9ad3b3
+  subpackages:
+  - pkg/util/proto
+testImports:
+- name: github.com/ghodss/yaml
+  version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
+- name: github.com/onsi/ginkgo
+  version: 747514b53ddd06d5d37d096c1cb313cfe620d7d4
+- name: github.com/onsi/gomega
+  version: 003f63b7f4cff3fc95357005358af2de0f5fe152

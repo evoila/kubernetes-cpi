@@ -3,12 +3,12 @@ package config_test
 import (
 	"encoding/json"
 
-	"k8s.io/client-go/1.4/pkg/runtime"
-	clientcmdapi "k8s.io/client-go/1.4/tools/clientcmd/api"
+	"k8s.io/apimachinery/pkg/runtime"
+	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 
+	"github.com/evoila/kubernetes-cpi/config"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/sykesm/kubernetes-cpi/config"
 )
 
 var _ = Describe("Kubernetes Config", func() {

@@ -1,15 +1,15 @@
 package kubecluster
 
 import (
-	"k8s.io/client-go/1.4/kubernetes"
-	core "k8s.io/client-go/1.4/kubernetes/typed/core/v1"
+	"k8s.io/client-go/kubernetes"
+	core "k8s.io/client-go/kubernetes/typed/core/v1"
 )
 
 type Client interface {
 	Context() string
 	Namespace() string
 
-	Core() core.CoreInterface
+	Core() core.CoreV1Interface
 
 	ConfigMaps() core.ConfigMapInterface
 	PersistentVolumeClaims() core.PersistentVolumeClaimInterface

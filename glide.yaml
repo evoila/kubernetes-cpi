@@ -1,0 +1,19 @@
+package: github.com/evoila/kubernetes-cpi
+import:
+- package: code.cloudfoundry.org/clock
+- package: github.com/nu7hatch/gouuid
+- package: k8s.io/apimachinery
+- package: k8s.io/api
+- package: k8s.io/kube-openapi/pkg/util/proto
+- package: gopkg.in/yaml.v2
+- package: github.com/golang/glog
+- package: github.com/googleapis/gnostic/OpenAPIv2
+- package: github.com/google/gofuzz
+- package: github.com/golang/protobuf
+- package: golang.org/x/net
+- package: golang.org/x/text
+testImport:
+- package: github.com/onsi/ginkgo
+- package: github.com/onsi/gomega
+- package: github.com/ghodss/yaml
+
