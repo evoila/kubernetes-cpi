@@ -49,10 +49,6 @@ bosh deploy -e <ENVIRONMENT> -d <DEPLOYMENTNAME> manifest/<YOURMANIFEST>.yml
 
 Welcome to contribute through pull request  
 
-# Credits
-This is a branch from repository which was original developed by: Matthew Sykes (https://github.com/sykesm)
-
-
 # Installation
 
 ## Requirements
@@ -60,14 +56,17 @@ You have setup your Go environment with:
 * Go Binaries 
 * Go Path
 * Godep installed `go get github.com/tools/godep`
+* Glide installed 
 
 ## Getting started
 After setting up the core environment the next step is to load the Kubernetes Go Client. This is a bit more of work, as we need to retrieve the specific version:
 
 ```shell
-go get k8s.io/client-go/...
-git checkout v5.0.0
-cd client-go/
-git checkout v5.0.0
-godep restore ./...
+glide update
 ```
+
+## Release
+To use this, it needs to be integrated into a Bosh release.
+
+# Credits
+This is a branch from repository which was original developed by: Matthew Sykes (https://github.com/sykesm)
