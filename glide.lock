@@ -1,5 +1,5 @@
-hash: 1e7d3be77e6537f42e858de952335fbf19c53f35806b934eb5a17eff081d0259
-updated: 2018-01-28T15:50:15.830552+01:00
+hash: 2ac45132ab6666ae113682a161138b3c80ccc1fd089645c70163b13389aba345
+updated: 2018-04-13T09:10:48.355957132+02:00
 imports:
 - name: code.cloudfoundry.org/clock
   version: e9dc86bbf0e5bbe6bf7ff5a6f71e048959b61f71
@@ -29,30 +29,27 @@ imports:
 - name: github.com/google/gofuzz
   version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
 - name: github.com/googleapis/gnostic
-  version: 0c5108395e2debce0d731cf0287ddf7242066aba
+  version: ee43cbb60db7bd22502942cccbc39059117352ab
   subpackages:
   - OpenAPIv2
   - compiler
   - extensions
-- name: github.com/howeyc/gopass
-  version: bf9dde6d0d2c004a008c27aaee91170c786f6db8
 - name: github.com/imdario/mergo
   version: 6633656539c1639d9d78127b7d47c622b5d7b6dc
 - name: github.com/json-iterator/go
   version: 13f86432b882000a51c6e610c620974462691a97
-- name: github.com/juju/ratelimit
-  version: 5b9ff866471762aa2ab2dced63c9fb6f53921342
 - name: github.com/nu7hatch/gouuid
   version: 179d4d0c4d8d407a32af483c2354df1d2c91e6c3
 - name: github.com/spf13/pflag
   version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
 - name: golang.org/x/crypto
-  version: 81e90905daefcd6fd217b62423c0908922eadb30
+  version: 49796115aa4b964c318aad4f3084fdb41e9aa067
   subpackages:
   - ssh/terminal
 - name: golang.org/x/net
   version: 1c05540f6879653db88113bc4a2b70aec4bd491f
   subpackages:
+  - context
   - html
   - html/atom
   - html/charset
@@ -86,12 +83,16 @@ imports:
   - transform
   - unicode/bidi
   - unicode/norm
+- name: golang.org/x/time
+  version: f51c12702a4d776e4c1fa9b0fabab841babae631
+  subpackages:
+  - rate
 - name: gopkg.in/inf.v0
   version: 3887ee99ecf07df5b447e9b00d9c0b2adaa9f3e4
 - name: gopkg.in/yaml.v2
-  version: 53feefa2559fb8dfa8d81baad31be332c97d6c77
+  version: 670d4cfef0544295bc27a114dbac37980d83185a
 - name: k8s.io/api
-  version: dc0dd48d5a5cae9f8736bb0643cfe6052e450f1b
+  version: 847e24b2c0e587a6a097d187ebd72e1ca24de001
   subpackages:
   - admissionregistration/v1alpha1
   - admissionregistration/v1beta1
@@ -122,14 +123,14 @@ imports:
   - storage/v1alpha1
   - storage/v1beta1
 - name: k8s.io/apimachinery
-  version: b621949a1923cee3fce8bca9613e9a83609f0bbc
+  version: 5d4f0da8e5fde7cbadf8ab3ce5cfb76f86dd854e
   subpackages:
   - pkg/api/errors
   - pkg/api/meta
   - pkg/api/resource
   - pkg/apis/meta/v1
   - pkg/apis/meta/v1/unstructured
-  - pkg/apis/meta/v1alpha1
+  - pkg/apis/meta/v1beta1
   - pkg/conversion
   - pkg/conversion/queryparams
   - pkg/fields
@@ -163,7 +164,7 @@ imports:
   - third_party/forked/golang/json
   - third_party/forked/golang/reflect
 - name: k8s.io/client-go
-  version: 91392bcd633dd63faa0ebb990f2e5599658ebacc
+  version: 92a7e0590135445af85d49e68630552180bd9e0a
   subpackages:
   - discovery
   - discovery/fake
@@ -226,7 +227,10 @@ imports:
   - kubernetes/typed/storage/v1alpha1/fake
   - kubernetes/typed/storage/v1beta1
   - kubernetes/typed/storage/v1beta1/fake
+  - pkg/apis/clientauthentication
+  - pkg/apis/clientauthentication/v1alpha1
   - pkg/version
+  - plugin/pkg/client/auth/exec
   - rest
   - rest/watch
   - testing
@@ -243,12 +247,12 @@ imports:
   - util/homedir
   - util/integer
 - name: k8s.io/kube-openapi
-  version: a07b7bbb58e7fdc5144f8d7046331d29fc9ad3b3
+  version: 50ae88d24ede7b8bad68e23c805b5d3da5c8abaf
   subpackages:
   - pkg/util/proto
 testImports:
 - name: github.com/onsi/ginkgo
-  version: 11459a886d9cd66b319dac7ef1e917ee221372c9
+  version: 9eda700730cba42af70d53180f9dcce9266bc2bc
   subpackages:
   - config
   - internal/codelocation
@@ -268,7 +272,7 @@ testImports:
   - reporters/stenographer/support/go-isatty
   - types
 - name: github.com/onsi/gomega
-  version: dcabb60a477c2b6f456df65037cb6708210fbb02
+  version: 003f63b7f4cff3fc95357005358af2de0f5fe152
   subpackages:
   - format
   - ghttp

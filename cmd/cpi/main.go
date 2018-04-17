@@ -79,6 +79,9 @@ func main() {
 	case "delete_stemcell":
 		result, err = cpi.Dispatch(&req, actions.DeleteStemcell)
 
+	case "info":
+		result, err = cpi.Dispatch(&req, actions.Info)
+
 	// VM management
 	case "create_vm":
 		vmCreator := &actions.VMCreator{
@@ -136,6 +139,10 @@ func main() {
 	case "get_disks":
 		diskGetter := actions.DiskGetter{ClientProvider: provider}
 		result, err = cpi.Dispatch(&req, diskGetter.GetDisks)
+
+	case "set_disk_metadata":
+		diskMetadataSetter := actions.DiskMetadataSetter{ClientProvider: provider}
+		result, err = cpi.Dispatch(&req, diskMetadataSetter.SetDiskMetadata)
 
 	// Not implemented
 	case "configure_networks":
