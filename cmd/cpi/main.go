@@ -18,7 +18,7 @@ import (
 
 const (
 	DefaultPostRecreateDelay = 15 * time.Second
-	DefaultPodReadyTimeout   = 60 * time.Second
+	DefaultPodReadyTimeout   = 300 * time.Second
 )
 
 var agentConfigFlag = flag.String(
