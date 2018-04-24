@@ -25,7 +25,7 @@ func (v *DiskMetadataSetter) SetDiskMetadata(diskcid cpi.DiskCID, metadata map[s
 	}
 
 	coreClient := client.Core()
-	volume, err := coreClient.PersistentVolumeClaims("bosh").Get("disk-"+diskID, metav1.GetOptions{})
+	volume, err := coreClient.PersistentVolumeClaims(client.Namespace()).Get("disk-"+diskID, metav1.GetOptions{})
 	if err != nil {
 		return err
 	}
@@ -52,7 +52,7 @@ func (v *DiskMetadataSetter) SetDiskMetadata(diskcid cpi.DiskCID, metadata map[s
 		return err
 	}
 
-	_, err = coreClient.PersistentVolumeClaims("bosh").Patch(volume.Name, types.StrategicMergePatchType, patch)
+	_, err = coreClient.PersistentVolumeClaims(client.Namespace()).Patch(volume.Name, types.StrategicMergePatchType, patch)
 	if err != nil {
 		return err
 	}
