@@ -2,6 +2,7 @@ package actions
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/evoila/kubernetes-cpi/cpi"
 	"github.com/evoila/kubernetes-cpi/kubecluster"
@@ -57,6 +58,18 @@ func (d *DiskCreator) CreateDisk(size uint, cloudProps CreateDiskCloudProperties
 	})
 	if err != nil {
 		return "", err
+	}
+
+	volume, err := client.PersistentVolumeClaims().Get("disk-"+diskID, metav1.GetOptions{})
+	if err != nil {
+		return "", err
+	}
+	for bound := volume.Status.Phase; bound != "Bound"; bound = volume.Status.Phase {
+		time.Sleep(1 * time.Second)
+		volume, err = client.PersistentVolumeClaims().Get("disk-"+diskID, metav1.GetOptions{})
+		if err != nil {
+			return "", err
+		}
 	}
 
 	return NewDiskCID(client.Context(), diskID), nil
