@@ -2,6 +2,7 @@ package kubecluster
 
 import (
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 )
@@ -11,6 +12,7 @@ const DefaultContext = ""
 //go:generate counterfeiter -o fakes/client_provider.go --fake-name ClientProvider . ClientProvider
 type ClientProvider interface {
 	New(context string) (Client, error)
+	GetRestConfig(context string) (*rest.Config, error)
 }
 
 type Provider struct {
@@ -29,7 +31,7 @@ func (p *Provider) New(context string) (Client, error) {
 		&clientcmd.ClientConfigLoadingRules{},
 	)
 
-	restConfig, err := kubeClientConfig.ClientConfig()
+	restConfig, err := p.GetRestConfig(context)
 	if err != nil {
 		return nil, err
 	}
@@ -49,4 +51,15 @@ func (p *Provider) New(context string) (Client, error) {
 		namespace: ns,
 		Clientset: kubeClient,
 	}, nil
+}
+
+func (p *Provider) GetRestConfig(context string) (*rest.Config, error) {
+	kubeClientConfig := clientcmd.NewNonInteractiveClientConfig(
+		p.Config,
+		context,
+		&clientcmd.ConfigOverrides{},
+		&clientcmd.ClientConfigLoadingRules{},
+	)
+
+	return kubeClientConfig.ClientConfig()
 }

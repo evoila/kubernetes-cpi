@@ -1,10 +1,12 @@
 package actions
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"reflect"
+	"strings"
 	"time"
 
 	"code.cloudfoundry.org/clock"
@@ -15,7 +17,9 @@ import (
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/watch"
+	"k8s.io/client-go/kubernetes/scheme"
 	core "k8s.io/client-go/kubernetes/typed/core/v1"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 type VolumeManager struct {
@@ -122,8 +126,62 @@ func (v *VolumeManager) recreatePod(client kubecluster.Client, op Operation, age
 		return errors.New("Pod recreate failed with a timeout")
 	}
 
-	// TODO: Need an agent readiness check that's real
-	v.Clock.Sleep(v.PostRecreateDelay)
+	v.WaitForPostPodDelay(agentID, client)
+
+	return nil
+}
+
+func (v *VolumeManager) WaitForPostPodDelay(agentID string, client kubecluster.Client) error {
+	podService := client.Pods()
+	var (
+		execOut bytes.Buffer
+		execErr bytes.Buffer
+	)
+
+	pod, err := podService.Get("agent-"+agentID, metav1.GetOptions{})
+	if err != nil {
+		return err
+	}
+
+	restConfig, err := v.ClientProvider.GetRestConfig(client.Context())
+	if err != nil {
+		return err
+	}
+
+	req := client.Core().RESTClient().Post().Resource("pods").Name(pod.Name).
+		Namespace(pod.Namespace).SubResource("exec")
+	req.VersionedParams(&v1.PodExecOptions{
+		Container: pod.Spec.Containers[0].Name,
+		Command:   []string{"curl", "127.0.0.1:2825", "--max-time", "1"},
+		Stdout:    true,
+		Stderr:    true,
+	}, scheme.ParameterCodec)
+
+	exec, err := remotecommand.NewSPDYExecutor(restConfig, "POST", req.URL())
+	if err != nil {
+		return err
+	}
+
+	exec.Stream(remotecommand.StreamOptions{
+		Stdout: &execOut,
+		Stderr: &execErr,
+	})
+
+	for strings.Contains(execErr.String(), "Connection refused") {
+		execOut.Reset()
+		execErr.Reset()
+
+		exec, err := remotecommand.NewSPDYExecutor(restConfig, "POST", req.URL())
+		if err != nil {
+			return err
+		}
+
+		exec.Stream(remotecommand.StreamOptions{
+			Stdout: &execOut,
+			Stderr: &execErr,
+		})
+		time.Sleep(1 * time.Second)
+	}
 
 	return nil
 }
