@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/evoila/kubernetes-cpi/agent"
 	"github.com/evoila/kubernetes-cpi/config"
@@ -105,7 +106,7 @@ func (v *VMCreator) Create(
 	}
 
 	// create the pod
-	_, err = createPod(client.Pods(), ns, agentID, string(stemcellCID), *network, cloudProps.Resources)
+	_, err = createPod(client, ns, agentID, string(stemcellCID), *network, cloudProps.Resources)
 	if err != nil {
 		return "", err
 	}
@@ -240,7 +241,8 @@ func createServices(serviceClient core.ServiceInterface, ns, agentID string, ser
 	return nil
 }
 
-func createPod(podClient core.PodInterface, ns, agentID, image string, network cpi.Network, resources Resources) (*v1.Pod, error) {
+func createPod(client kubecluster.Client, ns, agentID, image string, network cpi.Network, resources Resources) (*v1.Pod, error) {
+	podClient := client.Pods()
 	trueValue := true
 	rootUID := int64(0)
 
@@ -250,6 +252,11 @@ func createPod(podClient core.PodInterface, ns, agentID, image string, network c
 	}
 
 	resourceReqs, err := getPodResourceRequirements(resources)
+	if err != nil {
+		return nil, err
+	}
+
+	volumeName, err := createVarVcapVolume(agentID, client)
 	if err != nil {
 		return nil, err
 	}
@@ -283,6 +290,10 @@ func createPod(podClient core.PodInterface, ns, agentID, image string, network c
 				}, {
 					Name:      "bosh-ephemeral",
 					MountPath: "/var/vcap/data",
+				}, {
+					Name:      "var-vcap",
+					MountPath: "/var/vcap",
+					SubPath:   "vcap",
 				}},
 			}},
 			Volumes: []v1.Volume{{
@@ -303,9 +314,54 @@ func createPod(podClient core.PodInterface, ns, agentID, image string, network c
 				VolumeSource: v1.VolumeSource{
 					EmptyDir: &v1.EmptyDirVolumeSource{},
 				},
+			}, {
+				Name: "var-vcap",
+				VolumeSource: v1.VolumeSource{
+					PersistentVolumeClaim: &v1.PersistentVolumeClaimVolumeSource{
+						ClaimName: volumeName,
+					},
+				},
 			}},
 		},
 	})
+}
+
+func createVarVcapVolume(agentID string, client kubecluster.Client) (string, error) {
+	volumeSize, err := resource.ParseQuantity("3Gi")
+	if err != nil {
+		return "", err
+	}
+	_, err = client.PersistentVolumeClaims().Create(&v1.PersistentVolumeClaim{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "var-vcap-" + agentID,
+			Namespace: client.Namespace(),
+			Labels: map[string]string{
+				"bosh.cloudfoundry.org/var-vcap-id": agentID,
+			},
+		},
+		Spec: v1.PersistentVolumeClaimSpec{
+			AccessModes: []v1.PersistentVolumeAccessMode{v1.ReadWriteOnce},
+			Resources: v1.ResourceRequirements{
+				Requests: v1.ResourceList{
+					v1.ResourceStorage: volumeSize,
+				},
+			},
+		},
+	})
+
+	volume, err := client.PersistentVolumeClaims().Get("var-vcap-"+agentID, metav1.GetOptions{})
+	if err != nil {
+		return "", err
+	}
+	for bound := volume.Status.Phase; bound != "Bound"; bound = volume.Status.Phase {
+		time.Sleep(1 * time.Second)
+		volume, err = client.PersistentVolumeClaims().Get("var-vcap-"+agentID, metav1.GetOptions{})
+		if err != nil {
+			return "", err
+		}
+	}
+
+	return "var-vcap-" + agentID, err
 }
 
 func getPodResourceRequirements(resources Resources) (v1.ResourceRequirements, error) {

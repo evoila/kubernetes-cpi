@@ -37,7 +37,16 @@ func (v *VMDeleter) Delete(vmcid cpi.VMCID) error {
 		return err
 	}
 
+	err = deletePersistentVolumeClaim(client.PersistentVolumeClaims(), agentID)
+	if err != nil {
+		return err
+	}
+
 	return nil
+}
+
+func deletePersistentVolumeClaim(volumeService core.PersistentVolumeClaimInterface, agentID string) error {
+	return volumeService.Delete("var-vcap-"+agentID, &metav1.DeleteOptions{GracePeriodSeconds: int64Ptr(0)})
 }
 
 func deleteConfigMap(configMapService core.ConfigMapInterface, agentID string) error {
