@@ -288,9 +288,6 @@ func createPod(client kubecluster.Client, ns, agentID, image string, network cpi
 					MountPath: "/var/vcap/bosh/instance_settings.json",
 					SubPath:   "instance_settings.json",
 				}, {
-					Name:      "bosh-ephemeral",
-					MountPath: "/var/vcap/data",
-				}, {
 					Name:      "var-vcap",
 					MountPath: "/var/vcap",
 					SubPath:   "vcap",
@@ -308,11 +305,6 @@ func createPod(client kubecluster.Client, ns, agentID, image string, network cpi
 							Path: "instance_settings.json",
 						}},
 					},
-				},
-			}, {
-				Name: "bosh-ephemeral",
-				VolumeSource: v1.VolumeSource{
-					EmptyDir: &v1.EmptyDirVolumeSource{},
 				},
 			}, {
 				Name: "var-vcap",
