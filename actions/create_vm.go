@@ -319,7 +319,7 @@ func createPod(client kubecluster.Client, ns, agentID, image string, network cpi
 }
 
 func createVarVcapVolume(agentID string, client kubecluster.Client) (string, error) {
-	volumeSize, err := resource.ParseQuantity("3Gi")
+	volumeSize, err := resource.ParseQuantity("5Gi")
 	if err != nil {
 		return "", err
 	}
