@@ -1,14 +1,18 @@
-hash: 2ac45132ab6666ae113682a161138b3c80ccc1fd089645c70163b13389aba345
-updated: 2018-04-13T09:10:48.355957132+02:00
+hash: 03d4025bf79b707a590fca07a08d06b69d4843c753b6901ee3ee1c22cca92766
+updated: 2018-08-06T13:28:53.245669438+02:00
 imports:
 - name: code.cloudfoundry.org/clock
-  version: e9dc86bbf0e5bbe6bf7ff5a6f71e048959b61f71
+  version: 02e53af36e6c978af692887ed449b74026d76fec
   subpackages:
   - fakeclock
 - name: github.com/davecgh/go-spew
   version: 782f4967f2dc4564575ca782fe2d04090b5faca8
   subpackages:
   - spew
+- name: github.com/docker/spdystream
+  version: 449fdfce4d962303d702fec724ef0ad181c92528
+  subpackages:
+  - spdy
 - name: github.com/ghodss/yaml
   version: 73d445a93680fa1a78ae23a5839bad48f32ba1ee
 - name: github.com/gogo/protobuf
@@ -29,21 +33,27 @@ imports:
 - name: github.com/google/gofuzz
   version: 44d81051d367757e1c7c6a5a86423ece9afcf63c
 - name: github.com/googleapis/gnostic
-  version: ee43cbb60db7bd22502942cccbc39059117352ab
+  version: 0c5108395e2debce0d731cf0287ddf7242066aba
   subpackages:
   - OpenAPIv2
   - compiler
   - extensions
+- name: github.com/howeyc/gopass
+  version: bf9dde6d0d2c004a008c27aaee91170c786f6db8
 - name: github.com/imdario/mergo
   version: 6633656539c1639d9d78127b7d47c622b5d7b6dc
 - name: github.com/json-iterator/go
-  version: 13f86432b882000a51c6e610c620974462691a97
+  version: f2b4162afba35581b6d4a50d3b8f34e33c144682
+- name: github.com/modern-go/concurrent
+  version: bacd9c7ef1dd9b15be4a9909b8ac7a4e313eec94
+- name: github.com/modern-go/reflect2
+  version: 05fbef0ca5da472bbf96c9322b84a53edc03c9fd
 - name: github.com/nu7hatch/gouuid
   version: 179d4d0c4d8d407a32af483c2354df1d2c91e6c3
 - name: github.com/spf13/pflag
-  version: 4c012f6dcd9546820e378d0bdda4d8fc772cdfea
+  version: 583c0c0531f06d5278b7d917446061adc344b5cd
 - name: golang.org/x/crypto
-  version: 49796115aa4b964c318aad4f3084fdb41e9aa067
+  version: 81e90905daefcd6fd217b62423c0908922eadb30
   subpackages:
   - ssh/terminal
 - name: golang.org/x/net
@@ -92,7 +102,7 @@ imports:
 - name: gopkg.in/yaml.v2
   version: 670d4cfef0544295bc27a114dbac37980d83185a
 - name: k8s.io/api
-  version: 847e24b2c0e587a6a097d187ebd72e1ca24de001
+  version: 0f11257a8a25954878633ebdc9841c67d8f83bdb
   subpackages:
   - admissionregistration/v1alpha1
   - admissionregistration/v1beta1
@@ -123,7 +133,7 @@ imports:
   - storage/v1alpha1
   - storage/v1beta1
 - name: k8s.io/apimachinery
-  version: 5d4f0da8e5fde7cbadf8ab3ce5cfb76f86dd854e
+  version: e386b2658ed20923da8cc9250e552f082899a1ee
   subpackages:
   - pkg/api/errors
   - pkg/api/meta
@@ -148,10 +158,13 @@ imports:
   - pkg/util/clock
   - pkg/util/errors
   - pkg/util/framer
+  - pkg/util/httpstream
+  - pkg/util/httpstream/spdy
   - pkg/util/intstr
   - pkg/util/json
   - pkg/util/mergepatch
   - pkg/util/net
+  - pkg/util/remotecommand
   - pkg/util/runtime
   - pkg/util/sets
   - pkg/util/strategicpatch
@@ -162,9 +175,10 @@ imports:
   - pkg/version
   - pkg/watch
   - third_party/forked/golang/json
+  - third_party/forked/golang/netutil
   - third_party/forked/golang/reflect
 - name: k8s.io/client-go
-  version: 92a7e0590135445af85d49e68630552180bd9e0a
+  version: 23781f4d6632d88e869066eaebb743857aa1ef9b
   subpackages:
   - discovery
   - discovery/fake
@@ -241,18 +255,21 @@ imports:
   - tools/clientcmd/api/v1
   - tools/metrics
   - tools/reference
+  - tools/remotecommand
   - transport
+  - transport/spdy
   - util/cert
+  - util/exec
   - util/flowcontrol
   - util/homedir
   - util/integer
 - name: k8s.io/kube-openapi
-  version: 50ae88d24ede7b8bad68e23c805b5d3da5c8abaf
+  version: 39cb288412c48cb533ba4be5d6c28620b9a0c1b4
   subpackages:
   - pkg/util/proto
 testImports:
 - name: github.com/onsi/ginkgo
-  version: 9eda700730cba42af70d53180f9dcce9266bc2bc
+  version: 11459a886d9cd66b319dac7ef1e917ee221372c9
   subpackages:
   - config
   - internal/codelocation
@@ -272,7 +289,7 @@ testImports:
   - reporters/stenographer/support/go-isatty
   - types
 - name: github.com/onsi/gomega
-  version: 003f63b7f4cff3fc95357005358af2de0f5fe152
+  version: dcabb60a477c2b6f456df65037cb6708210fbb02
   subpackages:
   - format
   - ghttp
